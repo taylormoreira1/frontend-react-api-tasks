@@ -1,22 +1,14 @@
 import { Text, Button, Flex, Spacer } from "@chakra-ui/react";
-import { useAuth } from "../context/AuthProvider/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const Header = () => {
-    const { name, email, logout } = useAuth();
-    const navigate = useNavigate();
-
-    const handleLogout = () => {
-        logout();
-        navigate("/");
-    };
+    const { user, logout } = useAuth();
 
     return (
         <Flex justify="center" align="center" w="100%">
-            <Text fontSize="md" pe={5}>Bem-vindo, {name}</Text>
-            
+            <Text fontSize="md" pe={5}>Bem-vindo, {user?.name}</Text>
             <Spacer />
-            <Button onClick={handleLogout} colorScheme="teal" size="sm">Logout</Button>
+            <Button onClick={() => logout()} colorScheme="teal" size="sm">Logout</Button>
         </Flex>
     );
 };

@@ -1,14 +1,15 @@
 import { Heading, Flex, Input, Button, Text, Center, useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { Api } from "../services/api";
-import { useState } from "react"; // Adicione esta linha para usar o useState hook
-import { useAuth } from "../context/AuthProvider/useAuth";
+import { api } from "../services/api";
+import { useContext, useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+
 
 const Register = () => {
     const navigate = useNavigate();
     const toast = useToast();
 
-    const auth = useAuth();
+    const { authenticate } = useAuth();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -32,10 +33,10 @@ const Register = () => {
                 password_confirmation: passwordConfirmation
             };
 
-            const response = await Api.post("/register/", data, config);
+            const response = await api.post("/register/", data, config);
 
             if (response.status === 201) {
-                await auth.authenticate(email, password);
+                await authenticate(email, password);
                 navigate("/tarefas");
             }
 
@@ -63,7 +64,6 @@ const Register = () => {
             <Flex direction="column" p={10} rounded="md" boxShadow="md" bg="white" maxW="585px" m={10}>
                 <Heading alignSelf="center" as="h1" size="lg" >Criar conta</Heading>
                 <form onSubmit={handleRegister} >
-                    {/* Adicione os atributos value e onChange para atualizar os estados */}
                     <Input type="text" placeholder="Nome" mt={4} value={name} onChange={(e) => setName(e.target.value)} />
                     <Input type="email" placeholder="Email" mt={4} value={email} onChange={(e) => setEmail(e.target.value)} />
                     <Input type="password" placeholder="Senha" mt={4} value={password} onChange={(e) => setPassword(e.target.value)} />

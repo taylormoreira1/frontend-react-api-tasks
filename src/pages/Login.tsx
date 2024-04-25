@@ -1,19 +1,27 @@
 import { Heading, Flex, Input, Button, Text, Center, useToast } from "@chakra-ui/react";
-import { useAuth } from "../context/AuthProvider/useAuth";
+import { useAuth } from "../contexts/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Login = () => {
-    const auth = useAuth();
+    const { isAuthenticated, authenticate } = useAuth();
     const navigate = useNavigate();
     const toast = useToast();
 
-    async function onFinish(event) {
+    //redirect is autenticated
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate("/tarefas");
+        }
+    }, [isAuthenticated, navigate]);
+
+    async function handleLogin(event) {
         event.preventDefault();
 
         const { email, password } = event.target.elements;
 
         try {
-            await auth.authenticate(email.value, password.value);
+            await authenticate(email.value, password.value);
             navigate("/tarefas");
         } catch (error) {
             toast({
@@ -32,7 +40,7 @@ const Login = () => {
                 <Heading as="h1" size="lg" mb={4}>
                     Login
                 </Heading>
-                <form onSubmit={onFinish}>
+                <form onSubmit={handleLogin}>
                     <Input type="email" name="email" placeholder="Email" />
                     <Input type="password" name="password" placeholder="Senha" mt={4} />
                     <Flex justifyContent="flex-end" mt={8}>
@@ -49,9 +57,7 @@ const Login = () => {
                 </Text>
             </Flex>
         </Center>
-
     );
 };
 
 export default Login;
-
